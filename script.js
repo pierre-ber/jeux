@@ -4,7 +4,8 @@ class Game {
         this.gameData;
         this.table;
         this.grid;
-        this.priceFieldMinusOne = 1
+        this.priceFieldMinusOne = 1;
+        this.displayGrid;
     }
 
     fetchGame() {
@@ -15,18 +16,23 @@ class Game {
             .then(data => this.gameData = data);
     }
 
+    formatGridForDisplay() {
+        return JSON.parse(JSON.stringify(this.grid));
+    }
+
     display() {
+        this.displayGrid = this.formatGridForDisplay();
         this.table = document.createElement('table');
         this.table.style.position = 'absolute';
         this.table.style.top = '10px';
         this.table.style.right = '10px';
         this.table.style.zIndex = "10000";
         let values = this.gameData.description.prizeFields.map(Object.values);
-        for (let i = 0; i < this.grid.length; i++) {
+        for (let i = 0; i < this.displayGrid.length; i++) {
             let tr = document.createElement('tr');
-            for (let j = 0; j < this.grid[0].length; j++) {
+            for (let j = 0; j < this.displayGrid[0].length; j++) {
                 let td = document.createElement('td');
-                td.innerText = this.grid[i][j];
+                td.innerText = this.displayGrid[i][j];
                 td.style.padding = "8px";
                 for (let [x, y] of values) {
                     if (i === x - this.priceFieldMinusOne && y - this.priceFieldMinusOne === j) {
@@ -115,6 +121,10 @@ class Binoxxo extends Game {
         const f = (a, x = 0, y = 0, w = a.length, p, R = a[y]) => (M = z => !a.some((r, y) => /(0|1),\1,\1/.exec(s = r.map((v, x) => (v = z ? v : a[x][y], b -= 1 & v, c -= !v, m |= 2 & v, v), b = c = w / 2)) || b * c < 0 | o[b * c || s] & (o[s] = 1), o = {}))(m = 0) & M(1) && (m ? R && [0, 1].map(n => (p = R[x]) == n | p > 1 && (R[x] = n, f(a, z = (x + 1) % w, y + !z), R[x] = p)) : this.assign(a));
         f(this.grid);
         return this.grid;
+    }
+
+    formatGridForDisplay() {
+        return JSON.parse(JSON.stringify(this.grid.map(row => row.map(cell => cell === 0 ? "x" : "o"))))
     }
 }
 

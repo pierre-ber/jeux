@@ -134,6 +134,7 @@ class Paroli extends Game {
         this.grid;
         this.combinations;
         this.priceFieldMinusOne = 0;
+        this.soluce = ""
     }
 
     build() {
@@ -249,6 +250,63 @@ class Paroli extends Game {
                 iter++;
             }
         }
+    }
+
+    display() {
+        console.log(this.gameData.description);
+        this.displayGrid = this.formatGridForDisplay();
+        this.table = document.createElement('table');
+        this.table.style.position = 'absolute';
+        this.table.style.top = '10px';
+        this.table.style.right = '10px';
+        this.table.style.zIndex = "10000";
+        let values = this.gameData.description.prizeFields.map(Object.values);
+        for (let i = 0; i < this.displayGrid.length; i++) {
+            let tr = document.createElement('tr');
+            for (let j = 0; j < this.displayGrid[0].length; j++) {
+                let td = document.createElement('td');
+                td.innerText = this.displayGrid[i][j];
+                td.style.padding = "8px";
+                for (let [x, y] of values) {
+                    if (i === x - this.priceFieldMinusOne && y - this.priceFieldMinusOne === j) {
+                        td.style.backgroundColor = "#0ff"
+                    }
+                }
+                tr.appendChild(td);
+            }
+            this.table.appendChild(tr);
+        }
+
+        let spacer = document.createElement('tr');
+        for (let i = 0; i < this.grid.length; i++) {
+            let _spacer = document.createElement('td');
+            _spacer.style.padding = '8px';
+            spacer.appendChild(_spacer);
+        }
+        this.table.appendChild(spacer);
+
+        for (let { row, col } of this.gameData.description.prizeFields) {
+            this.soluce += this.grid[row][col]
+        }
+        let tr = document.createElement('tr');
+        let padding = Math.floor((this.grid.length - this.soluce.length) / 2)
+        for (let i = 0; i < padding; i++) {
+            tr.appendChild(document.createElement('td'));
+        }
+        for (let letter of this.soluce) {
+            let td = document.createElement('td')
+            td.innerText = letter;
+            td.style.padding = "8px";
+            td.style.backgroundColor = "#F18500"
+            tr.appendChild(td);
+        }
+        this.table.appendChild(tr);
+        document.body.appendChild(this.table);
+
+    }
+
+    formatGridForDisplay() {
+        return JSON.parse(JSON.stringify(this.grid.map(row => row.map(cell => cell === 0 ? "" : cell))))
     }
 
 }
